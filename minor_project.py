@@ -20,16 +20,23 @@ while True:
     #time.sleep(0.1) 
 
 
-def match_percent(path_ref, path_img):
+
+def match_percent(path_ref, img,i):
     ref_img = cv2.imread(path_ref, 0)
     ref_img = cv2.resize(ref_img, (400,300))
+    #cv2.imshow('resize_IPWebcam1',ref_img)
     ref_edges = cv2.Canny(ref_img, 100, 200)
 
-    img = cv2.imread(path_img, 0)
+    #img = cv2.imread(path_img, 0)
     img = cv2.resize(img, (400, 300))
+    #cv2.imshow('resize_IPWebcam2',img)
     edges = cv2.Canny(img, 100, 200)
 
+    #cv2.imwrite("IP1.jpg",img)   #To  CAlibrate
+    #cv2.imwrite("IP2.jpg",ref_img) #To Calibrate
+    
     height, width = ref_edges.shape
+    print("ctr",i,"height",height,"width",width)
     whites = 0
     matches = 0
 
@@ -37,12 +44,21 @@ def match_percent(path_ref, path_img):
         for j in range(0, width):
             if ref_edges[i, j] == 255:
                 whites = whites + 1
-            if (ref_edges[i, j] == 255) and edges[i, j] == 255:
+            if (ref_edges[i, j] != 255) and edges[i, j] == 255:
                 matches = matches + 1
-
-    match_percent = (matches/whites)*750
+           
+    print("match",matches)
+    print("whites",whites)
+    a= (float(matches)/(float(matches)+float(whites)+50.0))
+    print("a",a)
+    a*=100.0
+    match_percent = a
     print(match_percent)
-    return match_percent
+    
+    return match_percent 
+
+
+
 
 import time
 def operate_led():
